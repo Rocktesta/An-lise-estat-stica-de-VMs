@@ -12,7 +12,7 @@ def readXl (xl_file):  # funcao para ler o arquivo .xl (apenas a primeira coluna
 
     return data
 
-xl_file = "C:\\Users\\" #FIXME  
+xl_file = "C:\\Users" # FIXME
 
 def dataPlot (data_set):
     plt.plot(data_set)
@@ -23,15 +23,17 @@ def dataPlot (data_set):
 
 def frequencyTable (data):
     n = len(data)
-    classes = np.round(np.sqrt(n))
+    classes = int(np.round(np.sqrt(n)))
     max_amplitude = data[n - 1] - data[0]
     classes_amp = int(np.ceil((max_amplitude / classes)))
-    histogram = np.histogram(data, bins=np.arange(classes_amp))
+    bins = np.linspace(data[0], data[-1] + classes_amp, classes + 1)
+    histogram = np.histogram(data, bins=bins)
     return print(histogram)
 
 def main ():
     data = readXl(xl_file)
     print(data)
     frequencyTable(data)
+    dataPlot(data)
 
 main()

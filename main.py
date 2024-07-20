@@ -50,7 +50,7 @@ def dataplotNormal(data):
     plt.ylabel('Média de VMs ociosas')
     plt.title("Q-Q plot")
 
-    #py.show()
+    plt.show()
 
 def frequencyTable(data):
     data = np.sort(data)
@@ -90,14 +90,17 @@ def temporalPlot(n_days, data_size, data):
     plt.plot(data_grouped['Days'], data_grouped['VMs'], marker='o', linestyle='-')
     plt.grid(True)
     plt.show()
+def BoxPlot(data):
+    plt.boxplot(data)
+    plt.show()
 
 def main():
     xl_file = "seminario_estatistica_(VM).xlsx"
     data = readXl(xl_file)
     freq, edges = frequencyTable(data)
     dataPlotHist(data, freq)
-    temporalPlot(25, len(data), np.random.shuffle(data))
     dataplotNormal(data)
+    BoxPlot(data)
     IsNormal(data)
 
     print(f"média {np.round(np.average(data), 4)}")

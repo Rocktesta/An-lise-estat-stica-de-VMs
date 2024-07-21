@@ -90,9 +90,49 @@ def temporalPlot(n_days, data_size, data):
     plt.plot(data_grouped['Days'], data_grouped['VMs'], marker='o', linestyle='-')
     plt.grid(True)
     plt.show()
+
 def BoxPlot(data):
     plt.boxplot(data)
     plt.show()
+
+def calculateQuartile(freq, classes):
+    freq = freq.tolist()
+    classes = classes.tolist()
+    n = sum(freq)
+
+    Q1_pos = 0.25 * n
+    Q2_pos = 0.50 * n
+    Q3_pos = 0.75 * n
+
+    quartiles = []
+
+    def findQuartile(position):
+        cumulative_freq = 0
+        for i, f in enumerate(freq):
+            cumulative_freq += f
+            if cumulative_freq >= position:
+                lower_class_limit = classes[i]
+                upper_class_limit = classes[i + 1]
+                cumulative_freq -= f
+                quartile_value = lower_class_limit + ((position - cumulative_freq) / f) * (upper_class_limit - lower_class_limit)
+                return quartile_value
+
+    Q1 = findQuartile(Q1_pos)
+    Q2 = findQuartile(Q2_pos)
+    Q3 = findQuartile(Q3_pos)
+
+    quartiles.extend([Q1, Q2, Q3])
+    return quartiles
+
+def calculateCV(data):
+    mean = np.mean(data)
+    std_dev = np.std(data)
+    cv = (std_dev / mean) * 100
+    return cv
+
+def calculateCurtose(data):
+    curtose = stats.kurtosis(data)
+    return curtose
 
 def main():
     xl_file = "seminario_estatistica_(VM).xlsx"
@@ -103,10 +143,17 @@ def main():
     BoxPlot(data)
     IsNormal(data)
 
+    quartiles = calculateQuartile(freq, edges)
+    cv = calculateCV(data)
+    curtose = calculateCurtose(data)
+
     print(f"média {np.round(np.average(data), 4)}")
     print(f"mediana {np.round(np.median(data), 4)}")
     print(f"variancia {np.round(statistics.pvariance(data), 4)}")
     print(f"desvio padrao {np.round(statistics.pstdev(data), 4)}")
     print(f"moda {np.round(modeGrouped(freq, edges), 4)}")
+    print(f'quartis: Q1 = {np.round(quartiles[0], 4)}, Q2 = {np.round(quartiles[1], 4)}, Q3 = {np.round(quartiles[2], 4)}')
+    print(f'coeficiente de variação: {np.round(cv, 4)}%')
+    print(f'curtose: {np.round(curtose, 4)}')
 
 main()

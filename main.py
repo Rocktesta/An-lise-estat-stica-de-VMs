@@ -128,11 +128,25 @@ def calculateCV(data):
     mean = np.mean(data)
     std_dev = np.std(data)
     cv = (std_dev / mean) * 100
-    return cv
+    return np.round(cv, 4)
 
 def calculateCurtose(data):
     curtose = stats.kurtosis(data)
     return curtose
+
+def z_test(data, population_mean=6, alpha=0.05):
+    sample_mean = np.mean(data)
+    sample_std = np.std(data, ddof=1)  # Sample standard deviation
+    sample_size = len(data)
+    
+    se = sample_std / np.sqrt(sample_size)
+    z_score = (sample_mean - population_mean) / se
+    cdf = stats.norm.cdf(z_score)
+    p_value = 1 - cdf
+    reject_null = p_value < alpha
+    
+    return np.round(z_score, 4), p_value, reject_null
+
 
 def main():
     xl_file = "seminario_estatistica_(VM).xlsx"
@@ -147,6 +161,7 @@ def main():
     cv = calculateCV(data)
     curtose = calculateCurtose(data)
 
+
     print(f"média {np.round(np.average(data), 4)}")
     print(f"mediana {np.round(np.median(data), 4)}")
     print(f"variancia {np.round(statistics.pvariance(data), 4)}")
@@ -155,5 +170,6 @@ def main():
     print(f'quartis: Q1 = {np.round(quartiles[0], 4)}, Q2 = {np.round(quartiles[1], 4)}, Q3 = {np.round(quartiles[2], 4)}')
     print(f'coeficiente de variação: {np.round(cv, 4)}%')
     print(f'curtose: {np.round(curtose, 4)}')
+    print(f"{z_test(data)}")
 
 main()

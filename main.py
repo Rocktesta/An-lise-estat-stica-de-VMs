@@ -80,19 +80,23 @@ def modeGrouped (freq, classes):
     mode += max_classes
     return mode
     
-def temporalPlot(n_days, data_size, data):
-    days = np.linspace(1, n_days, data_size)
-    data_f = pd.DataFrame({
-        'Days': days,
-        'VMs': data
-    })
-    data_grouped = data_f.groupby('Days')
-    plt.plot(data_grouped['Days'], data_grouped['VMs'], marker='o', linestyle='-')
+def temporalPlot(data):
+    rng = np.random.default_rng(42)  # Cria um gerador de números aleatórios com a seed especificada
+    shuffled_data = rng.permutation(data)  # Embaralha os dados in-place
+
+    horas = np.arange(1, len(data) + 1)  # Gera o eixo x de 1 até o número de elementos em data
+    plt.figure(figsize=(12, 6))
+    plt.plot(horas, shuffled_data, linestyle='-', color='b')
+    plt.title('Ociosidade Média de Máquinas Virtuais ao Longo de 500 Horas')
+    plt.xlabel('Horas')
+    plt.ylabel('Média de Ociosidade')
     plt.grid(True)
     plt.show()
 
 def BoxPlot(data):
     plt.boxplot(data)
+    plt.ylabel('Média de VMs ociosas')
+    plt.title('Média de VMs ociosas')
     plt.show()
 
 def calculateQuartile(freq, classes):
@@ -156,6 +160,7 @@ def main():
     dataplotNormal(data)
     BoxPlot(data)
     IsNormal(data)
+    temporalPlot(data)
 
     quartiles = calculateQuartile(freq, edges)
     cv = calculateCV(data)
@@ -171,5 +176,6 @@ def main():
     print(f'coeficiente de variação: {np.round(cv, 4)}%')
     print(f'curtose: {np.round(curtose, 4)}')
     print(f"{z_test(data)}")
+    print(f"{np.round(min(data), 4)}, {np.round(max(data), 4)}")
 
 main()
